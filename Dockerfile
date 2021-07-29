@@ -1,14 +1,22 @@
 FROM kbase/sdkbase2:python
-MAINTAINER KBase Developer
+MAINTAINER Roxane Ouango
 # -----------------------------------------
 # In this section, you can install any system dependencies required
 # to run your App.  For instance, you could place an apt-get update or
 # install line here, a git checkout to download code, or run any other
 # installation scripts.
 
-# RUN apt-get update
-
-
+RUN \
+    apt-get update && \
+    apt-get -y install build-essential cmake gcc zlib1g-dev
+RUN mkdir -p /kb/module
+WORKDIR /kb/module
+RUN git clone https://bouango@bitbucket.org/bouango/jgi-miniscrub.git
+COPY ./scripts/miniscrub-install.sh /kb/module/scripts/miniscrub-install.sh
+RUN ./scripts/miniscrub-install.sh
+# RUN cd jgi-miniscrub
+# RUN python3 nodocker-setup.py
+# RUN python3 miniscrub.py my-reads.fastq 
 # -----------------------------------------
 
 COPY ./ /kb/module
