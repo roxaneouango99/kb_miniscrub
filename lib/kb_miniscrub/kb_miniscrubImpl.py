@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 #BEGIN_HEADER
+# from lib.kb_miniscrub import run_kb_miniscrub
 import logging
 import os
-
 from installed_clients.KBaseReportClient import KBaseReport
+from . import run_kb_miniscrub
 #END_HEADER
 
 
@@ -51,14 +52,9 @@ class kb_miniscrub:
         # ctx is the context object
         # return variables are: output
         #BEGIN run_kb_miniscrub
+        miniscrub_env = dict(os.environ)
         report = KBaseReport(self.callback_url)
-        report_info = report.create({'report': {'objects_created':[],
-                                                'text_message': params['parameter_1']},
-                                                'workspace_name': params['workspace_name']})
-        output = {
-            'report_name': report_info['name'],
-            'report_ref': report_info['ref'],
-        }
+        output = run_kb_miniscrub(miniscrub_env, report)
         #END run_kb_miniscrub
 
         # At some point might do deeper type checking...
@@ -67,6 +63,8 @@ class kb_miniscrub:
                              'output is not type dict as required.')
         # return the results
         return [output]
+
+
     def status(self, ctx):
         #BEGIN_STATUS
         returnVal = {'state': "OK",
