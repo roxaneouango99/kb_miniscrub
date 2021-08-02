@@ -2,7 +2,7 @@ import logging
 import os
 
 
-def run_kb_miniscrub(params, report, minisrub_env):
+def run_command(params, report, minisrub_env):
     """
         This example function accepts any number of parameters and returns results in a KBaseReport
         :param params: instance of mapping from String to unspecified object
