@@ -20,7 +20,43 @@
             "text_options": {
                 "valid_ws_types": [ ]
             }
-        }
+        },
+
+        {
+			"id": "input_reads_ref",
+			"optional": false,
+			"advanced": false,
+			"allow_multiple": false,
+			"default_values": [ "" ],
+			"field_type": "text",
+			"text_options": {
+				"valid_ws_types": [
+                    "KBaseRNASeq.RNASeqSampleSet",
+                    "KBaseSets.ReadsSet", 
+                    "KBaseFile.PairedEndLibrary", 
+                    "KBaseFile.SingleEndLibrary", 
+                    "KBaseAssembly.PairedEndLibrary", 
+                    "KBaseAssembly.SingleEndLibrary"
+                ]
+			}
+		},
+		{
+			"id": "output_reads_name",
+			"optional": false,
+			"advanced": false,
+			"allow_multiple": false,
+			"default_values": [ "" ],
+			"field_type": "text",
+			"text_options": {
+				"valid_ws_types": [
+                    "KBaseSets.ReadsSet", 
+                    "KBaseFile.PairedEndLibrary", 
+                    "KBaseFile.SingleEndLibrary"
+                ],
+				"is_output_name": true
+			}
+		}
+
     ],
     "behavior": {
         "service-mapping": {
@@ -37,7 +73,18 @@
                 },{
                     "input_parameter": "parameter_1",
                     "target_property": "parameter_1"
-                }
+                },
+                {
+					"input_parameter": "input_reads_ref",
+					"target_property": "input_reads_ref",
+					"target_type_transform": "resolved-ref"
+
+				},
+				{
+					"input_parameter": "output_reads_name",
+					"target_property": "output_reads_name"
+
+				}
             ],
             "output_mapping": [
                 {
@@ -46,7 +93,11 @@
                 },{
                     "service_method_output_path": [0,"report_ref"],
                     "target_property": "report_ref"
-                }
+                },
+                {
+					"narrative_system_variable": "workspace",
+					"target_property": "workspace_name"
+				}
             ]
         }
     },

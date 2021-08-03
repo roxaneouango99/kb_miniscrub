@@ -25,8 +25,8 @@ class kb_miniscrub:
     # the latter method is running.
     ######################################### noqa
     VERSION = "0.0.1"
-    GIT_URL = ""
-    GIT_COMMIT_HASH = ""
+    GIT_URL = "git@github.com:roxaneouango99/kb_miniscrub.git"
+    GIT_COMMIT_HASH = "c9444929a1baed09d517febb0c7e47d2fea6d47e"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
@@ -55,19 +55,7 @@ class kb_miniscrub:
         #BEGIN run_kb_miniscrub
         miniscrub_env = dict(os.environ)
         report = KBaseReport(self.callback_url)
-        ru_client = ReadsUtils(self.callback_url)
-        print('#############################################################')
-        print(params)
-        """
-        reads = ru_client.upload_reads({
-            'fwd_file': params['parameter_1'],
-            'interleaved': 0,
-            'name': params['workspace_name'],
-            'sequencing_tech': 'Unknown',
-            'wsname': params['workspace_name'],
-        })
-        print('reads', reads)
-        """
+        ru_client = ReadsUtils(self.callback_url)     
         output = run_command(params, report, miniscrub_env)
         #END run_kb_miniscrub
 
@@ -77,8 +65,6 @@ class kb_miniscrub:
                              'output is not type dict as required.')
         # return the results
         return [output]
-
-
     def status(self, ctx):
         #BEGIN_STATUS
         returnVal = {'state': "OK",
