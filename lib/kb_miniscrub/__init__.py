@@ -2,7 +2,7 @@ import logging
 import os
 
 
-def run_kb_miniscrub(report, minisrub_env):
+def run_kb_miniscrub(params, report, minisrub_env):
     """
         This example function accepts any number of parameters and returns results in a KBaseReport
         :param params: instance of mapping from String to unspecified object
@@ -17,7 +17,7 @@ def run_kb_miniscrub(report, minisrub_env):
         stdout=subprocess.PIPE,
     )
     print(f'##############################{proc.stdout}')
-    import sys 
+    import sys
     print(f'python version: {sys.version}')
     print(f'python executable: {sys.executable}')
         #
@@ -33,8 +33,9 @@ def run_kb_miniscrub(report, minisrub_env):
     )
     report_info = report.create({'report':{'objects_created':[],
                                             'text_message': params['parameter_1']},
-                                            'workspace_name': params['workspace_name']})      
+                                            'workspace_name': params['workspace_name']})
     output = {
             'report_name': report_info['name'],
             'report_ref': report_info['ref'],
         }
+    return output

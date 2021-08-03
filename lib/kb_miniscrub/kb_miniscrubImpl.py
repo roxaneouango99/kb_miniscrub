@@ -54,7 +54,7 @@ class kb_miniscrub:
         #BEGIN run_kb_miniscrub
         miniscrub_env = dict(os.environ)
         report = KBaseReport(self.callback_url)
-        output = run_kb_miniscrub(miniscrub_env, report)
+        output = run_kb_miniscrub(params, report, miniscrub_env)
         #END run_kb_miniscrub
 
         # At some point might do deeper type checking...
