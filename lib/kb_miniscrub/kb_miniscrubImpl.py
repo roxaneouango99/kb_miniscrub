@@ -43,7 +43,7 @@ class kb_miniscrub:
         pass
 
 
-    def run_kb_miniscrub(self, ctx, cls, params):
+    def run_kb_miniscrub(self, ctx, params):
         """
         This example function accepts any number of parameters and returns results in a KBaseReport
         :param params: instance of mapping from String to unspecified object
@@ -58,19 +58,17 @@ class kb_miniscrub:
         ru_client = ReadsUtils(self.callback_url)
         print('#############################################################')
         print(params)
-        reads = ru_client.upload_reads({'fwd_file': params['parameter_1'],
-                                        # 'wsname': cls.wsName
-                                        })
+        """
+        reads = ru_client.upload_reads({
+            'fwd_file': params['parameter_1'],
+            'interleaved': 0,
+            'name': params['workspace_name'],
+            'sequencing_tech': 'Unknown',
+            'wsname': params['workspace_name'],
+        })
         print('reads', reads)
-        # dummy_reads_ref_1 = cls.ru.upload_reads({'fwd_file': reads_file_path,
-                                                 
-        #                                          'sequencing_tech': 'Unknown',
-        #                                          'interleaved': 0,
-        #                                          'name': reads_object_name_1
-        #                                          })['obj_ref']
-        
-        output = run_kb_miniscrub(params, report, miniscrub_env)
-
+        """
+        output = run_command(params, report, miniscrub_env)
         #END run_kb_miniscrub
 
         # At some point might do deeper type checking...
