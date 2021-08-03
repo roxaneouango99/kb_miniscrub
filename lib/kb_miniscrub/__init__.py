@@ -1,6 +1,6 @@
 import logging
 import os
-
+import subprocess
 
 def run_command(params, report, minisrub_env):
     """
@@ -9,7 +9,18 @@ def run_command(params, report, minisrub_env):
         :returns: instance of type "ReportResults" -> structure: parameter
            "report_name" of String, parameter "report_ref" of String
     """
-    import subprocess
+    print('#############################################################')
+    print(params)
+    """
+    reads = ru_client.upload_reads({
+        'fwd_file': params['parameter_1'],
+        'interleaved': 0,
+        'name': params['workspace_name'],
+        'sequencing_tech': 'Unknown',
+        'wsname': params['workspace_name'],
+    })
+    print('reads', reads)
+    """
     proc = subprocess.run(
         ['python3', '-c', '"import sys; print(sys.executable)"'],
         check=True,
@@ -31,6 +42,7 @@ def run_command(params, report, minisrub_env):
             check=True,
             env=miniscrub_env,
     )
+
     report_info = report.create({'report':{'objects_created':[],
                                             'text_message': params['parameter_1']},
                                             'workspace_name': params['workspace_name']})
