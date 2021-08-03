@@ -68,7 +68,9 @@ class kb_miniscrub:
         #                                          'interleaved': 0,
         #                                          'name': reads_object_name_1
         #                                          })['obj_ref']
-        output = run_command(miniscrub_env, report)
+        
+        output = run_kb_miniscrub(params, report, miniscrub_env)
+
         #END run_kb_miniscrub
 
         # At some point might do deeper type checking...
