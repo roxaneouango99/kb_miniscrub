@@ -63,5 +63,11 @@ class kb_miniscrubTest(unittest.TestCase):
         #
         # Check returned data with
         # self.assertEqual(ret[...], ...) or other unittest methods
-        ret = self.serviceImpl.run_kb_miniscrub(self.ctx, {'workspace_name': self.wsName,
-                                                             'parameter_1': 'Hello World!'})
+        ret = self.serviceImpl.run_kb_miniscrub(
+            self.ctx, {
+            'workspace_name': self.wsName,
+            'parameter_1': 'Hello World!',
+            'input_reads_ref': '79/7/1',
+            'output_reads_name': 'out_reads'
+        })
+       
