@@ -2,8 +2,9 @@ import logging
 import os
 import re
 import subprocess
+import sys
 
-def run_command(params, report, ru_client, self, ctx, miniscrub_env):
+def run_command(params, report, ru_client, miniscrub_env):
     """
         This example function accepts any number of parameters and returns results in a KBaseReport
         :param params: instance of mapping from String to unspecified object
@@ -28,8 +29,7 @@ def run_command(params, report, ru_client, self, ctx, miniscrub_env):
         stderr=subprocess.PIPE,
         stdout=subprocess.PIPE,
     )
-    print(f'##############################{proc.stdout}')
-    import sys
+    
     print(f'python version: {sys.version}')
     print(f'python executable: {sys.executable}')
         
@@ -39,6 +39,9 @@ def run_command(params, report, ru_client, self, ctx, miniscrub_env):
         'interleaved': 'true',
         'gzipped': None
     })['files'][input_reads_ref]
+    print(f'##############################{reads_info}')
+
+    reads_path = reads_info['files']['fwd']
 
     miniscrub_env = dict(os.environ)
     miniscrub_env[
@@ -51,10 +54,30 @@ def run_command(params, report, ru_client, self, ctx, miniscrub_env):
             env=miniscrub_env,
     )
 
-    report_info = report.create({'report':{'objects_created':[],
-                                'text_message': params['parameter_1']},
-                                'workspace_name': params['workspace_name']
-                            })
+    miniscrub_env[
+        "MINISCRUB_COMMAND"
+    ] = f"""python3 miniscrub.py --mask --verbose {reads_path}
+    
+    """
+    subprocess.run(
+        "/kb/module/scripts/miniscrub-run.sh".split(" "),
+            check=True,
+            env=miniscrub_env,
+    )
+
+    linescount = 0
+    with open(reads_path, 'r') as file:
+        linescount = linescount +1
+    print(f'The number of line is {linescount}')
+
+
+    report_info = report.create({
+        'report':{
+            'objects_created':[],
+            'text_message': params['parameter_1']
+        },
+        'workspace_name': params['workspace_name']
+    })
     output = {
         'report_name': report_info['name'],
         'report_ref': report_info['ref'],
