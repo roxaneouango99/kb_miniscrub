@@ -33,7 +33,7 @@ def run_command(params, report, ru_client, miniscrub_env):
     print(f'python version: {sys.version}')
     print(f'python executable: {sys.executable}')
         
-    input_reads_ref = '79/7/1'
+    input_reads_ref = params['input_reads_ref']
     reads_info = ru_client.download_reads({
         'read_libraries': [input_reads_ref],
         'interleaved': 'true',
@@ -50,8 +50,8 @@ def run_command(params, report, ru_client, miniscrub_env):
     """
     subprocess.run(
         "/kb/module/scripts/miniscrub-run.sh".split(" "),
-            check=True,
-            env=miniscrub_env,
+        check=True,
+        env=miniscrub_env,
     )
 
     miniscrub_env[
@@ -59,16 +59,26 @@ def run_command(params, report, ru_client, miniscrub_env):
     ] = f"""python3 miniscrub.py --mask --verbose {reads_path}
     
     """
-    subprocess.run(
-        "/kb/module/scripts/miniscrub-run.sh".split(" "),
-            check=True,
-            env=miniscrub_env,
+    # subprocess.run(
+    #     "/kb/module/scripts/miniscrub-run.sh".split(" "),
+    #         check=True,
+    #         env=miniscrub_env,
+    # )
+    # head -n 4 {reads_path} 
+    reads_proc = subprocess.run(
+        "head -n 4 {reads_path}".split(" "),
+        capture_output=True,
+        check=True,
+        env=miniscrub_env,
     )
 
-    linescount = 0
-    with open(reads_path, 'r') as file:
-        linescount = linescount +1
-    print(f'The number of line is {linescount}')
+    with open(reads_path, 'w') as file:
+        file.write(reads_proc.stdout)
+    # print(f'The number of line is {len(data)}')
+
+    # with open(reads_path, 'r') as file:
+    #     data = file.readlines()                                    
+    # print(f'The number of line is {len(data)}')
 
 
     report_info = report.create({
