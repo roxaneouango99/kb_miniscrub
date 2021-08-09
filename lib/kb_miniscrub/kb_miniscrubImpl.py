@@ -55,7 +55,7 @@ class kb_miniscrub:
         #BEGIN run_kb_miniscrub
         miniscrub_env = dict(os.environ)
         report = KBaseReport(self.callback_url)
-        ru_client = ReadsUtils(self.callback_url)     
+        ru_client = ReadsUtils(self.callback_url)   
         output = run_command(params, report, ru_client, miniscrub_env)
         #END run_kb_miniscrub
 

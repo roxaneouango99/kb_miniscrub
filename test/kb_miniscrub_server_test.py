@@ -67,7 +67,7 @@ class kb_miniscrubTest(unittest.TestCase):
             self.ctx, {
             'workspace_name': self.wsName,
             'parameter_1': 'Hello World!',
-            # 'input_reads_ref': '79/7/1',
+            #'input_reads_ref': '79/7/1',
             'input_reads_ref': '58980/8/1',
             'output_reads_name': 'out_reads'
         })
