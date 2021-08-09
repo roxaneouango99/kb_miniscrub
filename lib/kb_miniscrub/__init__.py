@@ -4,6 +4,7 @@ import re
 import subprocess
 import sys
 
+
 def run_command(params, report, ru_client, miniscrub_env):
     """
         This example function accepts any number of parameters and returns results in a KBaseReport
@@ -42,6 +43,18 @@ def run_command(params, report, ru_client, miniscrub_env):
     print(f'##############################{reads_info}')
 
     reads_path = reads_info['files']['fwd']
+    print(reads_path)
+
+    input_reads_ref = params['input_reads_ref']
+    new_reads = ru_client.upload_reads({
+        'fwd_file': reads_path,
+        'interleaved': 1,
+        'wsname': params['workspace_name'],
+        # 'name': params['output_reads_name'],
+        'source_reads_ref':[input_reads_ref]
+    })['obj_ref']
+    print(f'##############################{new_reads}')
+
 
     miniscrub_env = dict(os.environ)
     miniscrub_env[
@@ -65,20 +78,21 @@ def run_command(params, report, ru_client, miniscrub_env):
     #         env=miniscrub_env,
     # )
     # head -n 4 {reads_path} 
-    reads_proc = subprocess.run(
-        "head -n 4 {reads_path}".split(" "),
-        capture_output=True,
-        check=True,
-        env=miniscrub_env,
-    )
 
-    with open(reads_path, 'w') as file:
-        file.write(reads_proc.stdout)
+    # reads_proc = subprocess.run(
+    #     "head -n 4 {reads_path}".split(" "),
+    #     capture_output=True,
+    #     check=True,
+    #     env=miniscrub_env,
+    # )
+
+    # with open(reads_path, 'w') as file:
+    #     file.write(reads_proc.stdout)
     # print(f'The number of line is {len(data)}')
 
-    # with open(reads_path, 'r') as file:
-    #     data = file.readlines()                                    
-    # print(f'The number of line is {len(data)}')
+    with open(reads_path, 'r') as file:
+        data = file.readlines()                                    
+    print(f'The number of line is {len(data)}')
 
 
     report_info = report.create({
