@@ -56,7 +56,13 @@ class kb_miniscrub:
         miniscrub_env = dict(os.environ)
         report = KBaseReport(self.callback_url)
         ru_client = ReadsUtils(self.callback_url)   
-        output = run_command(params, report, ru_client, miniscrub_env)
+        output = run_command(
+            params, 
+            report, 
+            ru_client, 
+            self.shared_folder, 
+            miniscrub_env
+        )
         #END run_kb_miniscrub
 
         # At some point might do deeper type checking...

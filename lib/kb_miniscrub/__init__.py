@@ -5,7 +5,7 @@ import subprocess
 import sys
 
 
-def run_command(params, report, ru_client, miniscrub_env):
+def run_command(params, report, ru_client, shared_folder, miniscrub_env):
     """
         This example function accepts any number of parameters and returns results in a KBaseReport
         :param params: instance of mapping from String to unspecified object
@@ -14,16 +14,7 @@ def run_command(params, report, ru_client, miniscrub_env):
     """
     print('#############################################################')
     print(params)
-    """
-    reads = ru_client.upload_reads({
-        'fwd_file': params['parameter_1'],
-        'interleaved': 0,
-        'name': params['workspace_name'],
-        'sequencing_tech': 'Unknown',
-        'wsname': params['workspace_name'],
-    })
-    print('reads', reads)
-    """
+    
     proc = subprocess.run(
         ['python3', '-c', '"import sys; print(sys.executable)"'],
         check=True,
@@ -45,17 +36,6 @@ def run_command(params, report, ru_client, miniscrub_env):
     reads_path = reads_info['files']['fwd']
     print(reads_path)
 
-    input_reads_ref = params['input_reads_ref']
-    new_reads = ru_client.upload_reads({
-        'fwd_file': reads_path,
-        'interleaved': 1,
-        'wsname': params['workspace_name'],
-        # 'name': params['output_reads_name'],
-        'source_reads_ref':[input_reads_ref]
-    })['obj_ref']
-    print(f'##############################{new_reads}')
-
-
     miniscrub_env = dict(os.environ)
     miniscrub_env[
         "MINISCRUB_COMMAND"
@@ -70,8 +50,26 @@ def run_command(params, report, ru_client, miniscrub_env):
     miniscrub_env[
         "MINISCRUB_COMMAND"
     ] = f"""python3 miniscrub.py --mask --verbose {reads_path}
-    
     """
+    with open(reads_path, 'r') as file:
+        data = file.readlines()                       
+    print(f'The number of line is {len(data)}')
+    print(f'The type of data is {type(data)}')                       
+    print(f'The first 8 lines {data[0:8]}')
+
+    out_path = os.path.join(shared_folder, 'reads.fastq')
+    with open(out_path, 'w') as file:
+        file.write(''.join(data[0:8]))
+
+    new_reads = ru_client.upload_reads({
+        'fwd_file': out_path,
+        'interleaved': 0,
+        'wsname': params['workspace_name'],
+        'name': params['output_reads_name'],
+        'source_reads_ref':input_reads_ref
+    })['obj_ref']
+    print(f'##############################{new_reads}')
+
     # subprocess.run(
     #     "/kb/module/scripts/miniscrub-run.sh".split(" "),
     #         check=True,
@@ -86,9 +84,6 @@ def run_command(params, report, ru_client, miniscrub_env):
     #     env=miniscrub_env,
     # )
 
-    # with open(reads_path, 'w') as file:
-    #     file.write(reads_proc.stdout)
-    # print(f'The number of line is {len(data)}')
 
     with open(reads_path, 'r') as file:
         data = file.readlines()                                    
