@@ -12,7 +12,6 @@ def run_command(params, report, ru_client, shared_folder, miniscrub_env):
         :returns: instance of type "ReportResults" -> structure: parameter
            "report_name" of String, parameter "report_ref" of String
     """
-    print('#############################################################')
     print(params)
     
     proc = subprocess.run(
@@ -31,35 +30,27 @@ def run_command(params, report, ru_client, shared_folder, miniscrub_env):
         'interleaved': 'true',
         'gzipped': None
     })['files'][input_reads_ref]
-    print(f'##############################{reads_info}')
+    print(f'{reads_info}')
 
     reads_path = reads_info['files']['fwd']
     print(reads_path)
 
     miniscrub_env = dict(os.environ)
+    
+    out_path = os.path.join(shared_folder, 'reads.fastq')
     miniscrub_env[
         "MINISCRUB_COMMAND"
-    ] = f"""python3 miniscrub.py -h
+    ] = f"""python3 miniscrub.py --mask --verbose --output {out_path} {reads_path}
     """
     subprocess.run(
         "/kb/module/scripts/miniscrub-run.sh".split(" "),
         check=True,
         env=miniscrub_env,
     )
-
-    miniscrub_env[
-        "MINISCRUB_COMMAND"
-    ] = f"""python3 miniscrub.py --mask --verbose {reads_path}
-    """
-    with open(reads_path, 'r') as file:
-        data = file.readlines()                       
-    print(f'The number of line is {len(data)}')
-    print(f'The type of data is {type(data)}')                       
-    print(f'The first 8 lines {data[0:8]}')
-
-    out_path = os.path.join(shared_folder, 'reads.fastq')
-    with open(out_path, 'w') as file:
-        file.write(''.join(data[0:8]))
+    with open(out_path, 'r') as file:
+        data = file.readlines()
+    if len(data) == 0:
+        raise ValueError ('no lines found in FASTQ file:'+ str(out_path))
 
     new_reads = ru_client.upload_reads({
         'fwd_file': out_path,
@@ -68,27 +59,7 @@ def run_command(params, report, ru_client, shared_folder, miniscrub_env):
         'name': params['output_reads_name'],
         'source_reads_ref':input_reads_ref
     })['obj_ref']
-    print(f'##############################{new_reads}')
-
-    # subprocess.run(
-    #     "/kb/module/scripts/miniscrub-run.sh".split(" "),
-    #         check=True,
-    #         env=miniscrub_env,
-    # )
-    # head -n 4 {reads_path} 
-
-    # reads_proc = subprocess.run(
-    #     "head -n 4 {reads_path}".split(" "),
-    #     capture_output=True,
-    #     check=True,
-    #     env=miniscrub_env,
-    # )
-
-
-    with open(reads_path, 'r') as file:
-        data = file.readlines()                                    
-    print(f'The number of line is {len(data)}')
-
+    print(f'{new_reads}')
 
     report_info = report.create({
         'report':{
